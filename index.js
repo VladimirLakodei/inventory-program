@@ -2,10 +2,12 @@ import express from "express";
 import mongoose from "mongoose";
 
 import checkAuth from "./utils/checkAuth.js";
-import { registerValidator } from "./validations/auth.js";
-import { me, login, register } from "./controllers/UserController.js"
-
-console.log('process.env.DB_CS', process.env.DB_CS)
+import checkPermission from "./utils/checkPermission.js";
+import handleValidationErrors from "./utils/handleValidationErrors.js";
+import { actValidator } from "./validations/act.js";
+import { loginValidator, registerValidator } from "./validations/auth.js";
+import * as ActController from "./controllers/ActController.js"
+import * as UserController from "./controllers/UserController.js"
 
 mongoose.connect(
     process.env.DB_CS
@@ -20,14 +22,18 @@ const app = express();
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send('auth app');
+    res.send('inventory app');
 });
 
-app.post('/auth/login', login);
+app.post('/auth/login', loginValidator, handleValidationErrors, UserController.login);
+app.post('/auth/register', registerValidator, handleValidationErrors, UserController.register);
+app.get('/auth/me', checkAuth, UserController.getMe);
 
-app.post('/auth/register', registerValidator, register);
-
-app.get('/auth/me', checkAuth, me);
+app.get('/acts', checkPermission, ActController.getAll);
+app.get('/acts/:id', checkPermission, ActController.getOne);
+app.post('/acts', checkAuth, actValidator, handleValidationErrors, ActController.create);
+app.patch('/acts/:id', checkAuth, actValidator, handleValidationErrors, ActController.update);
+app.delete('/acts/:id', checkAuth, ActController.remove);
 
 app.listen(4444, (error) => {
     if (error) {
