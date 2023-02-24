@@ -48,6 +48,7 @@ export const create = async (req, res) => {
     try {
         const doc = new ActModel({
             number: req.body.number,
+            title: req.body.title,
             description: req.body.description,
             location: req.body.location,
             materiallyResponsible: req.body.materiallyResponsible,
@@ -77,6 +78,7 @@ export const update = async (req, res) => {
         },
         {
             number: req.body.number,
+            title: req.body.title,
             description: req.body.description,
             location: req.body.location,
             materiallyResponsible: req.body.materiallyResponsible,

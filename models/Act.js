@@ -7,6 +7,10 @@ const ActSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        title: {
+            type: String,
+            required: true,
+        },
         description: {
             type: String,
         },
