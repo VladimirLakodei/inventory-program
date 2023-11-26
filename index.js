@@ -69,7 +69,7 @@ app.get("/acts/:actId/items/:itemId", ActItemController.getActItemById);
 app.patch("/acts/:actId/items/:itemId", ActItemController.updateItem);
 app.delete("/acts/:actId/items/:itemId", ActItemController.deleteItem);
 
-app.listen(4444, (error) => {
+app.listen(process.env.PORT || 4444, (error) => {
   if (error) {
     return console.log(error);
   }
