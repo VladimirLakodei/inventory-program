@@ -44,6 +44,7 @@ app.post(
 );
 app.get("/auth/me", checkAuth, UserController.getMe);
 
+app.get("/acts/search", ActItemController.searchActsByItemProperty);
 app.get("/acts", checkPermission, ActController.getAll);
 app.get("/acts/:id", checkPermission, ActController.getOne);
 app.post(

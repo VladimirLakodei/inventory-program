@@ -107,6 +107,8 @@ export const remove = async (req, res) => {
   try {
     const actId = req.params.id;
 
+    // TODO: Delete act items from DB
+
     ActModel.findOneAndDelete(
       {
         _id: actId,

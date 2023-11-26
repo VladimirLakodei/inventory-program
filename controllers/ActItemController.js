@@ -203,3 +203,60 @@ export const deleteItem = async (req, res) => {
     });
   }
 };
+
+export const searchActsByItemProperty = async (req, res) => {
+  try {
+    const searchTerm = req.query.searchTerm;
+    const searchProperty = req.query.searchProperty;
+
+    const validProperties = [
+      "name",
+      "inventoryNumber",
+      "unit",
+      "quantity",
+      "initialValue",
+      "sum",
+      "note",
+    ];
+
+    const numberProperties = ["quantity", "initialValue", "sum"];
+
+    const queryItem = {};
+    const queryAct = {};
+
+    if (validProperties.includes(searchProperty)) {
+      if (numberProperties.includes(searchProperty)) {
+        const isNumber = !isNaN(parseFloat(searchTerm)) && isFinite(searchTerm);
+        if (isNumber) {
+          queryItem[searchProperty] = parseFloat(searchTerm);
+        } else {
+          res.json([]);
+        }
+      } else {
+        queryItem[searchProperty] = {
+          $regex: new RegExp(searchTerm, "i"),
+        };
+      }
+
+      const foundItems = await ActItemModel.find(queryItem).exec();
+
+      if (foundItems) {
+        queryAct["items"] = { $in: foundItems.map((item) => item._id) };
+      } else {
+        res.json([]);
+        return;
+      }
+    }
+
+    const matchingActs = await ActModel.find(queryAct).exec();
+
+    res.json(matchingActs);
+  } catch (error) {
+    console.error("search_acts_failed", error);
+    res.status(500).json({
+      success: false,
+      error,
+      message: "search_acts_failed",
+    });
+  }
+};
